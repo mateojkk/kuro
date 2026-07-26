@@ -17,13 +17,15 @@ const terminalLines = [
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const hasStarted = useRef(false);
-
   useEffect(() => {
-    if (hasStarted.current || !containerRef.current) return;
-    hasStarted.current = true;
-
+    if (!containerRef.current) return;
+    
     const container = containerRef.current;
+    container.innerHTML = ''; // Reset on mount
+    
+    let isActive = true;
+    let currentTimer: ReturnType<typeof setTimeout>;
+    
     let lineIndex = 0;
     let charIndex = 0;
     let isTag = false;
@@ -36,13 +38,15 @@ function App() {
     }
 
     function typeWriter() {
+      if (!isActive) return;
+      
       if (lineIndex < terminalLines.length) {
         const line = terminalLines[lineIndex];
         
         if (line === '<br>') {
           container.innerHTML += '<br>';
           lineIndex++;
-          setTimeout(typeWriter, 500);
+          currentTimer = setTimeout(typeWriter, 500);
           return;
         }
 
@@ -60,20 +64,24 @@ function App() {
           } else {
             container.innerHTML = container.innerHTML.substring(0, container.innerHTML.length - 1) || '';
             container.innerHTML = getRenderedContent() + currentLine + '<span class="cursor" style="animation: blink 1s step-end infinite;">█</span>';
-            setTimeout(typeWriter, Math.random() * 30 + 10);
+            currentTimer = setTimeout(typeWriter, Math.random() * 30 + 10);
           }
         } else {
           container.innerHTML = getRenderedContent() + currentLine + '<br>';
           lineIndex++;
           charIndex = 0;
           currentLine = '';
-          setTimeout(typeWriter, Math.random() * 500 + 200);
+          currentTimer = setTimeout(typeWriter, Math.random() * 500 + 200);
         }
       }
     }
 
-    const timer = setTimeout(typeWriter, 1000);
-    return () => clearTimeout(timer);
+    currentTimer = setTimeout(typeWriter, 1000);
+    
+    return () => {
+      isActive = false;
+      clearTimeout(currentTimer);
+    };
   }, []);
 
   return (
