@@ -1,0 +1,16 @@
+[
+  {
+    "serviceName": "Judge Service",
+    "serviceDescription": "Evaluate an agent's task execution against the provided requirements.",
+    "serviceType": "A2MCP",
+    "fee": "0.1",
+    "endpoint": "https://kuro-virid.vercel.app/api/judge"
+  },
+  {
+    "serviceName": "Delegate Service",
+    "serviceDescription": "Synthesize a structured task definition and sub-budget from a high-level user prompt.",
+    "serviceType": "A2MCP",
+    "fee": "0.1",
+    "endpoint": "https://kuro-virid.vercel.app/api/delegate"
+  }
+]
