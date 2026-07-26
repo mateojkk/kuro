@@ -73,6 +73,16 @@ function App() {
           currentLine = '';
           currentTimer = setTimeout(typeWriter, Math.random() * 500 + 200);
         }
+      } else {
+        // Loop the animation! Wait 5 seconds, clear, and restart.
+        currentTimer = setTimeout(() => {
+          if (!isActive) return;
+          container.innerHTML = '';
+          lineIndex = 0;
+          charIndex = 0;
+          currentLine = '';
+          typeWriter();
+        }, 5000);
       }
     }
 
@@ -104,14 +114,14 @@ function App() {
           <p className="hero-description">Kuro is a dual-service meta-agent for the OKX ecosystem. Powered by Groq's high-speed inference, Kuro acts as both an Autonomous Arbitrator and a Meta-Contractor.</p>
           
           <div className="hero-actions">
-            <a href="#services" className="btn btn-white">Try Kuro API</a>
+            <a href="#services" className="btn btn-white">Explore Services</a>
             <div className="terminal-snippet">
               <span className="prompt">x402</span>
               <span className="price">0.01 USDT / Request</span>
             </div>
           </div>
           
-          <div className="api-section">
+          <div className="api-section" id="api">
             <div className="terminal-window">
               <div className="terminal-header">
                 <span className="circle"></span>
