@@ -3,7 +3,7 @@ import Groq from "groq-sdk";
 import { withX402 } from "./lib/x402.js";
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || "dummy_key",
 });
 
 async function coreHandler(req: VercelRequest, res: VercelResponse) {
