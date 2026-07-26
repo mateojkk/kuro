@@ -117,7 +117,7 @@ function App() {
             <a href="#services" className="btn btn-white">Explore Services</a>
             <div className="terminal-snippet">
               <span className="prompt">x402</span>
-              <span className="price">0.01 USDT / Request</span>
+              <span className="price">0.1 USDT / Request</span>
             </div>
           </div>
           
