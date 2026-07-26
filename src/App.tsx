@@ -78,42 +78,44 @@ function App() {
 
   return (
     <>
-      <div className="glow-orb"></div>
-      <div className="glow-orb secondary"></div>
-
       <header>
-        <div className="logo">KURO<span className="dot">.</span></div>
+        <div className="logo">KURO.</div>
         <nav>
           <a href="#services">Services</a>
           <a href="#api">API Specs</a>
-          <a href="https://web3.okx.com/onchainos" className="cta-button" target="_blank" rel="noreferrer">OKX AI Marketplace</a>
+          <a href="#">Research</a>
+          <a href="#">Resources</a>
+          <a href="#">Pricing</a>
         </nav>
+        <div className="header-actions">
+          <a href="https://web3.okx.com/onchainos" className="btn btn-dark" target="_blank" rel="noreferrer">For Developers</a>
+          <a href="#api" className="btn btn-white">Try Kuro</a>
+        </div>
       </header>
 
       <main>
         <section className="hero">
-          <div className="badge">Decentralized Justice & Orchestration</div>
-          <h1>The Ultimate<br /><span className="gradient-text">Omni-Agent</span></h1>
-          <p>Kuro is a dual-service meta-agent for the OKX ecosystem. Powered by Groq's high-speed inference, Kuro acts as both an Autonomous Arbitrator and a Meta-Contractor.</p>
-          <div className="hero-buttons">
-            <a href="#services" className="primary-btn">Explore Services</a>
-            <div className="terminal-snippet">
-              <span className="prompt">x402</span><span className="price">0.01 USDT / Request</span>
-            </div>
+          <div className="breadcrumbs">
+            Home <span>/</span> Network <span>/</span> Kuro
+          </div>
+          <h1>Kuro: Open Autonomous Arbitration</h1>
+          <a href="#api" className="btn btn-white" style={{ marginBottom: '2rem' }}>Try Kuro API</a>
+          
+          <div className="hero-image-container">
+            <img src="/hero.jpg" alt="Decentralized intelligence network abstract representation" />
           </div>
         </section>
 
         <section id="services" className="services-section">
-          <h2>Dual Core Architecture</h2>
           <div className="cards-grid">
-            <div className="glass-card">
+            <div className="flat-card">
               <div className="card-icon">⚖️</div>
               <h3>The Autonomous Arbitrator</h3>
               <p className="endpoint">POST /api/judge</p>
               <p>Resolves marketplace disputes on-chain. Send Kuro a task description and a delivered payload, and it will cryptographically evaluate it to output a strict RELEASE_FUNDS or REFUND_USER decision.</p>
             </div>
 
-            <div className="glass-card">
+            <div className="flat-card">
               <div className="card-icon">🏗️</div>
               <h3>The Meta-Contractor</h3>
               <p className="endpoint">POST /api/delegate</p>
@@ -123,12 +125,12 @@ function App() {
         </section>
 
         <section id="api" className="api-section">
-          <h2>Live Terminal</h2>
+          <h2>API Terminal</h2>
           <div className="terminal-window">
             <div className="terminal-header">
-              <span className="circle red"></span>
-              <span className="circle yellow"></span>
-              <span className="circle green"></span>
+              <span className="circle"></span>
+              <span className="circle"></span>
+              <span className="circle"></span>
               <span className="title">kuro-agent ~ bash</span>
             </div>
             <div className="terminal-body" id="typewriter" ref={containerRef}>
@@ -139,7 +141,7 @@ function App() {
       </main>
 
       <footer>
-        <p>Built for the OKX AI Genesis Hackathon | Fully x402 Compliant</p>
+        <p>© 2026 Kuro Intelligence. Built for the OKX AI Genesis Hackathon.</p>
       </footer>
     </>
   );
