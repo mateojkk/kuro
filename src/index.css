@@ -148,7 +148,7 @@ nav a:hover {
 
 /* Services / Architecture */
 .services-section {
-  padding: 4rem 5%;
+  padding: 1rem 5% 4rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -157,7 +157,7 @@ nav a:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .flat-card {
@@ -204,7 +204,7 @@ nav a:hover {
 .api-section {
   width: 100%;
   max-width: 900px;
-  margin: 1rem auto 3rem;
+  margin: 1rem auto 1rem;
   text-align: left;
 }
 
@@ -245,7 +245,7 @@ nav a:hover {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   color: #d1d5db;
-  min-height: 250px;
+  min-height: 400px;
   line-height: 1.5;
 }
 
