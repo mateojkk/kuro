@@ -95,14 +95,29 @@ function App() {
 
       <main>
         <section className="hero">
-          <div className="breadcrumbs">
-            Home <span>/</span> Network <span>/</span> Kuro
-          </div>
-          <h1>Kuro: Open Autonomous Arbitration</h1>
-          <a href="#api" className="btn btn-white" style={{ marginBottom: '2rem' }}>Try Kuro API</a>
+          <h1>The Ultimate <span className="gradient-text">Omni-Agent</span></h1>
+          <p className="hero-description">Kuro is a dual-service meta-agent for the OKX ecosystem. Powered by Groq's high-speed inference, Kuro acts as both an Autonomous Arbitrator and a Meta-Contractor.</p>
           
-          <div className="hero-image-container">
-            <img src="/hero.jpg" alt="Decentralized intelligence network abstract representation" />
+          <div className="hero-actions">
+            <a href="#services" className="btn btn-white">Try Kuro API</a>
+            <div className="terminal-snippet">
+              <span className="prompt">x402</span>
+              <span className="price">0.01 USDT / Request</span>
+            </div>
+          </div>
+          
+          <div className="api-section">
+            <div className="terminal-window">
+              <div className="terminal-header">
+                <span className="circle"></span>
+                <span className="circle"></span>
+                <span className="circle"></span>
+                <span className="title">kuro-agent ~ bash</span>
+              </div>
+              <div className="terminal-body" id="typewriter" ref={containerRef}>
+                {/* Typed by JS */}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -120,21 +135,6 @@ function App() {
               <h3>The Meta-Contractor</h3>
               <p className="endpoint">POST /api/delegate</p>
               <p>Managing a massive project? Send your prompt and budget to Kuro. It breaks it down into sub-tasks and generates the exact specifications needed to autonomously hire other ASPs.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="api" className="api-section">
-          <h2>API Terminal</h2>
-          <div className="terminal-window">
-            <div className="terminal-header">
-              <span className="circle"></span>
-              <span className="circle"></span>
-              <span className="circle"></span>
-              <span className="title">kuro-agent ~ bash</span>
-            </div>
-            <div className="terminal-body" id="typewriter" ref={containerRef}>
-              {/* Typed by JS */}
             </div>
           </div>
         </section>
