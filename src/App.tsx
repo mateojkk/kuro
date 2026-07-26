@@ -83,10 +83,9 @@ function App() {
         <nav>
           <a href="#services">Architecture</a>
           <a href="#api">API Reference</a>
-          <a href="https://web3.okx.com/onchainos" target="_blank" rel="noreferrer">Ecosystem</a>
         </nav>
         <div className="header-actions">
-          <a href="https://web3.okx.com/onchainos" className="btn btn-dark" target="_blank" rel="noreferrer">For Developers</a>
+          <a href="https://github.com/mateojkk/kuro" className="btn btn-dark" target="_blank" rel="noreferrer">GitHub</a>
           <a href="#api" className="btn btn-white">Try Kuro</a>
         </div>
       </header>
