@@ -44,23 +44,7 @@ header {
   letter-spacing: 1px;
 }
 
-nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
 
-nav a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-weight: 400;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
-}
-
-nav a:hover {
-  color: var(--text-primary);
-}
 
 .header-actions {
   display: flex;

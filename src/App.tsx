@@ -80,13 +80,6 @@ function App() {
     <>
       <header>
         <div className="logo">KURO.</div>
-        <nav>
-          <a href="#services">Services</a>
-          <a href="#api">API Specs</a>
-          <a href="#">Research</a>
-          <a href="#">Resources</a>
-          <a href="#">Pricing</a>
-        </nav>
         <div className="header-actions">
           <a href="https://web3.okx.com/onchainos" className="btn btn-dark" target="_blank" rel="noreferrer">For Developers</a>
           <a href="#api" className="btn btn-white">Try Kuro</a>
