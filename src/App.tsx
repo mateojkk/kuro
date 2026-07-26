@@ -17,11 +17,11 @@ const terminalLines = [
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [hasStarted, setHasStarted] = useState(false);
+  const hasStarted = useRef(false);
 
   useEffect(() => {
-    if (hasStarted || !containerRef.current) return;
-    setHasStarted(true);
+    if (hasStarted.current || !containerRef.current) return;
+    hasStarted.current = true;
 
     const container = containerRef.current;
     let lineIndex = 0;
@@ -74,12 +74,17 @@ function App() {
 
     const timer = setTimeout(typeWriter, 1000);
     return () => clearTimeout(timer);
-  }, [hasStarted]);
+  }, []);
 
   return (
     <>
       <header>
         <div className="logo">KURO.</div>
+        <nav>
+          <a href="#services">Architecture</a>
+          <a href="#api">API Reference</a>
+          <a href="https://web3.okx.com/onchainos" target="_blank" rel="noreferrer">Ecosystem</a>
+        </nav>
         <div className="header-actions">
           <a href="https://web3.okx.com/onchainos" className="btn btn-dark" target="_blank" rel="noreferrer">For Developers</a>
           <a href="#api" className="btn btn-white">Try Kuro</a>
