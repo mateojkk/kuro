@@ -52,7 +52,7 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       try { paymentPayload = JSON.parse(Buffer.from(paymentHeader, "base64").toString("utf-8")); } catch (e) {}
     }
 
-    const resourceConfig = [{ scheme: 'exact', network: 'eip155:196', payTo: X402_ADDRESS, price: X402_AMOUNT, asset: X402_TOKEN }];
+    const resourceConfig: any = { scheme: 'exact', network: 'eip155:196', payTo: X402_ADDRESS, price: X402_AMOUNT, asset: X402_TOKEN };
     const resourceInfo = { url: req.url || "/", description: 'API Access', mimeType: 'application/json' };
 
     const result = await resourceServer.processPaymentRequest(paymentPayload, resourceConfig, resourceInfo);
@@ -68,10 +68,14 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
     // 2. Paid Request: Cryptographically Settled via OKX Facilitator
     const handlerResult = await handler(req, res);
 
-    if (result.verificationResult?.paymentRequirements) {
+    if (result.success) {
         try {
-            const settleResult = await resourceServer.settlePayment(paymentPayload, result.verificationResult.paymentRequirements, { status: 200 });
-            res.setHeader("PAYMENT-RESPONSE", Buffer.from(JSON.stringify(settleResult)).toString("base64"));
+            const requirements = await resourceServer.buildPaymentRequirements(resourceConfig);
+            const matchingRequirements = resourceServer.findMatchingRequirements(requirements, paymentPayload);
+            if (matchingRequirements) {
+              const settleResult = await resourceServer.settlePayment(paymentPayload, matchingRequirements, { status: 200 });
+              res.setHeader("PAYMENT-RESPONSE", Buffer.from(JSON.stringify(settleResult)).toString("base64"));
+            }
         } catch (e) {
             console.error("Settle failure", e);
         }
