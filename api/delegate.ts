@@ -35,8 +35,8 @@ Output ONLY JSON. No markdown formatting.`;
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama3-8b-8192",
-      temperature: 0.2,
+      model: "llama-3.1-8b-instant",
+      temperature: 0.1,
       response_format: { type: "json_object" },
     });
 
