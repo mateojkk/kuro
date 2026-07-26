@@ -156,7 +156,7 @@ function App() {
       </main>
 
       <footer>
-        <p>© 2026 Kuro Intelligence. Built for the OKX AI Genesis Hackathon.</p>
+        <p>© 2026 Kuro.</p>
       </footer>
     </>
   );
