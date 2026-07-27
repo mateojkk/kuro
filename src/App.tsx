@@ -111,7 +111,7 @@ function App() {
 
       <main>
         <section className="hero">
-          <h1>Deterministic <span className="gradient-text">Meta-Contractor</span></h1>
+          <h1>The Ultimate <span className="gradient-text">Omni-Agent</span></h1>
           <p className="hero-description">Kuro is a dual-service meta-agent for the OKX ecosystem. It orchestrates parallel swarms for massive tasks and verifies their code using a sandboxed V8 deterministic oracle.</p>
           
           <div className="hero-actions">
