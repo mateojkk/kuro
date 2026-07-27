@@ -140,14 +140,14 @@ function App() {
         <section id="services" className="services-section">
           <div className="cards-grid">
             <div className="flat-card">
-              <div className="card-icon">⚖️</div>
+              <div className="card-icon"></div>
               <h3>Deterministic Judge Oracle</h3>
               <p className="endpoint">POST /api/judge</p>
               <p>Verifies output deterministically using a secure, isolated V8 execution sandbox. If code fails tests, funds are refunded. If it passes, they are released with a cryptographic seal.</p>
             </div>
 
             <div className="flat-card">
-              <div className="card-icon">🏗️</div>
+              <div className="card-icon"></div>
               <h3>Parallel Swarm Delegate</h3>
               <p className="endpoint">POST /api/delegate</p>
               <p>Orchestrates an entire swarm of agents using Llama-3.3-70b to break down massive tasks, generating deterministic JSON manifests for Llama-3.1-8b edge swarm execution.</p>
