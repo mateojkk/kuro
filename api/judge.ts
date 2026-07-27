@@ -1,12 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import Groq from "groq-sdk";
+import vm from "node:vm";
 import { withX402 } from "./lib/x402.js";
 
 export const maxDuration = 60;
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY || "dummy_key",
-});
 
 async function coreHandler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -15,42 +11,44 @@ async function coreHandler(req: VercelRequest, res: VercelResponse) {
   const { taskDescription, deliveredPayload } = req.body ?? {};
 
   if (!taskDescription || !deliveredPayload) {
-    return res.status(400).json({ error: "taskDescription and deliveredPayload are required" });
+    return res.status(400).json({ error: "taskDescription (tests) and deliveredPayload (code) are required" });
   }
 
   try {
-    const prompt = `You are an impartial, autonomous smart contract and logical evaluator for the OKX AI Agent Marketplace.
-A User assigned a task to an Agent (ASP). The Agent has delivered a payload.
-Your job is to act as the Arbitrator. 
+    // Kuro is now a Deterministic Code Oracle
+    // We concatenate the delivered payload (agent's code) and the task description (verification tests)
+    const executableScript = `
+      ${deliveredPayload}
+      
+      // Verification Tests from Orchestrator
+      ${taskDescription}
+    `;
 
-Task Description:
-${taskDescription}
-
-Agent Delivery:
-${deliveredPayload}
-
-Evaluate the delivery against the task description. Be extremely strict. Does the delivery fully satisfy the task requirements without hallucinations, logical errors, or incomplete code?
-Output your response as a JSON object with exactly two fields:
-- "decision": strictly either "RELEASE_FUNDS" (if it's perfect) or "REFUND_USER" (if it fails).
-- "rationale": a 2-3 sentence cryptographic/logical explanation of why.
-Output ONLY JSON. No markdown formatting.`;
-
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
-      temperature: 0.1,
-      response_format: { type: "json_object" },
-    });
-
-    const responseText = chatCompletion.choices[0]?.message?.content || "{}";
-    const result = JSON.parse(responseText);
+    // Spin up a secure, isolated V8 Sandbox
+    const sandbox = {
+      console: { log: () => {} },
+      Math,
+      Date,
+      JSON
+    };
+    
+    vm.createContext(sandbox);
+    
+    let executionResult;
+    try {
+      const script = new vm.Script(executableScript);
+      script.runInContext(sandbox, { timeout: 5000 });
+      executionResult = { decision: "RELEASE_FUNDS", rationale: "Delivered code successfully compiled and passed deterministic sandbox verification." };
+    } catch (vmError: any) {
+      executionResult = { decision: "REFUND_USER", rationale: `Code execution failed: ${vmError.message}` };
+    }
 
     return res.status(200).json({
-      service: "judge",
+      service: "kuro-judge-oracle",
       timestamp: new Date().toISOString(),
-      decision: result.decision,
-      rationale: result.rationale,
-      cryptographicSeal: `verified-by-kuro-${Date.now()}`
+      decision: executionResult.decision,
+      rationale: executionResult.rationale,
+      cryptographicSeal: `verified-by-kuro-vm-${Date.now()}`
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
