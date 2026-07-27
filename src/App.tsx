@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 
 const terminalLines = [
-  '<span class="c-gray">$</span> curl -X POST https://kuro.okx.ai/api/judge \\',
-  '  -H <span class="c-green">"x-402-payment: <signed_tx>"</span> \\',
-  '  -d <span class="c-orange">\'{"taskDescription": "Audit ERC20", "deliveredPayload": "..."}\'</span>',
+  '<span class="c-gray">$</span> onchainos payment quote https://kuro-virid.vercel.app/api/judge --method POST \\',
+  '  --param code=<span class="c-orange">"function add(a, b) { return a + b; }"</span> \\',
+  '  --param test=<span class="c-orange">"add(2, 3) === 5"</span>',
   '<br>',
-  '<span class="c-gray">Analyzing cryptographic constraints...</span>',
-  '<span class="c-gray">Simulating logic paths via Groq LPU...</span>',
+  '<span class="c-gray">Initializing secure V8 isolation sandbox...</span>',
+  '<span class="c-gray">Executing code deterministically with 5000ms timeout...</span>',
   '<br>',
   '<span class="c-blue">{</span>',
-  '  <span class="c-blue">"service"</span>: <span class="c-green">"judge"</span>,',
-  '  <span class="c-blue">"decision"</span>: <span class="c-orange">"REFUND_USER"</span>,',
-  '  <span class="c-blue">"rationale"</span>: <span class="c-green">"Critical reentrancy vulnerability detected on line 42. ASP failed to satisfy security constraints."</span>',
+  '  <span class="c-blue">"service"</span>: <span class="c-green">"kuro-judge-oracle"</span>,',
+  '  <span class="c-blue">"decision"</span>: <span class="c-orange">"RELEASE_FUNDS"</span>,',
+  '  <span class="c-blue">"rationale"</span>: <span class="c-green">"Delivered code successfully compiled and passed deterministic sandbox verification."</span>,',
+  '  <span class="c-blue">"cryptographicSeal"</span>: <span class="c-orange">"verified-by-kuro-vm-1785180653"</span>',
   '<span class="c-blue">}</span>'
 ];
 
@@ -110,8 +111,8 @@ function App() {
 
       <main>
         <section className="hero">
-          <h1>The Ultimate <span className="gradient-text">Omni-Agent</span></h1>
-          <p className="hero-description">Kuro is a dual-service meta-agent for the OKX ecosystem. Powered by Groq's high-speed inference, Kuro acts as both an Autonomous Arbitrator and a Meta-Contractor.</p>
+          <h1>Deterministic <span className="gradient-text">Meta-Contractor</span></h1>
+          <p className="hero-description">Kuro is a dual-service meta-agent for the OKX ecosystem. It orchestrates parallel swarms for massive tasks and verifies their code using a sandboxed V8 deterministic oracle.</p>
           
           <div className="hero-actions">
             <a href="#services" className="btn btn-white">Explore Services</a>
@@ -140,16 +141,16 @@ function App() {
           <div className="cards-grid">
             <div className="flat-card">
               <div className="card-icon">⚖️</div>
-              <h3>The Autonomous Arbitrator</h3>
+              <h3>Deterministic Judge Oracle</h3>
               <p className="endpoint">POST /api/judge</p>
-              <p>Resolves marketplace disputes on-chain. Send Kuro a task description and a delivered payload, and it will cryptographically evaluate it to output a strict RELEASE_FUNDS or REFUND_USER decision.</p>
+              <p>Verifies output deterministically using a secure, isolated V8 execution sandbox. If code fails tests, funds are refunded. If it passes, they are released with a cryptographic seal.</p>
             </div>
 
             <div className="flat-card">
               <div className="card-icon">🏗️</div>
-              <h3>The Meta-Contractor</h3>
+              <h3>Parallel Swarm Delegate</h3>
               <p className="endpoint">POST /api/delegate</p>
-              <p>Managing a massive project? Send your prompt and budget to Kuro. It breaks it down into sub-tasks and generates the exact specifications needed to autonomously hire other ASPs.</p>
+              <p>Orchestrates an entire swarm of agents using Llama-3.3-70b to break down massive tasks, generating deterministic JSON manifests for Llama-3.1-8b edge swarm execution.</p>
             </div>
           </div>
         </section>
