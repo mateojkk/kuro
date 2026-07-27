@@ -28,6 +28,7 @@ async function getResourceServer() {
       initialized = true;
     } catch (err) {
       console.error("Failed to initialize OKX Facilitator:", err);
+      throw err;
     }
   }
 
@@ -41,7 +42,13 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
   return async (req: VercelRequest, res: VercelResponse) => {
     if (req.method === "OPTIONS") return res.status(200).end();
 
-    const rs = await getResourceServer();
+    let rs;
+    try {
+      rs = await getResourceServer();
+    } catch (err: any) {
+      console.error("Failed to initialize getResourceServer:", err);
+      return res.status(500).json({ error: "OKX SDK Initialization Error", details: err.message });
+    }
 
     const signature = req.headers["x-402-signature"] as string;
     
@@ -70,20 +77,9 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
     let result: any;
     try {
       result = await rs.processPaymentRequest(paymentPayload, resourceConfig, resourceInfo);
-    } catch (sdkError) {
-      console.warn("OKX SDK processPaymentRequest failed, falling back to manual verification", sdkError);
-      // Fallback: Manual verification
-      if (!paymentPayload) {
-        res.setHeader("PAYMENT-REQUIRED", Buffer.from(JSON.stringify({
-           challenge: "manual",
-           payTo: X402_ADDRESS,
-           amount: X402_AMOUNT
-        })).toString("base64"));
-        return res.status(402).json({ error: "Payment Required" });
-      }
-      
-      // Assume success for hackathon fallback if payload exists
-      result = { success: true };
+    } catch (sdkError: any) {
+      console.error("OKX SDK processPaymentRequest failed:", sdkError);
+      return res.status(500).json({ error: "OKX SDK Process Error", details: sdkError.message });
     }
 
     if (!result.success) {
@@ -97,7 +93,7 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
     // 2. Paid Request: Cryptographically Settled via OKX Facilitator
     const handlerResult = await handler(req, res);
 
-    if (result.success && !result.manualFallback) {
+    if (result.success) {
         try {
             const requirements = await rs.buildPaymentRequirements(resourceConfig);
             const matchingRequirements = rs.findMatchingRequirements(requirements, paymentPayload);
