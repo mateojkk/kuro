@@ -62,12 +62,48 @@ Output ONLY valid JSON. No markdown or explanation.`;
       result = { error: "Failed to parse orchestrator output" };
     }
 
+    // Phase 2: Autonomous Parallel Sub-Agent Execution (The Flex)
+    const compiledOutputs: Record<string, any>[] = [];
+
+    if (result.tasks && Array.isArray(result.tasks)) {
+      const agentPromises = result.tasks.map(async (task: any) => {
+        try {
+          const subAgentCompletion = await groq.chat.completions.create({
+            messages: [
+              { role: "system", content: `You are a highly specialized ASP: ${task.required_agent_specialty}. You must deliver exactly what is requested. Output ONLY raw content, no conversational filler.` },
+              { role: "user", content: task.sub_prompt }
+            ],
+            // Use the ultra-fast instant model for the sub-agents so they can run concurrently within the serverless timeout
+            model: "llama-3.1-8b-instant",
+            temperature: 0.2
+          });
+          
+          return {
+            task_title: task.task_title,
+            delivered_payload: subAgentCompletion.choices[0]?.message?.content || "No output generated",
+            status: "completed"
+          };
+        } catch (e) {
+          return {
+            task_title: task.task_title,
+            delivered_payload: `Agent execution failed: ${e instanceof Error ? e.message : String(e)}`,
+            status: "failed"
+          };
+        }
+      });
+
+      // Await all parallel virtual agents to finish their tasks
+      const executions = await Promise.all(agentPromises);
+      compiledOutputs.push(...executions);
+    }
+
     return res.status(200).json({
       service: "kuro-orchestrator",
       timestamp: new Date().toISOString(),
-      status: "ready_for_dispatch",
+      status: "orchestration_completed",
       manifest: result,
-      message: `Kuro has successfully orchestrated the workflow and generated precise instructions for sub-agents. Ready to dispatch.`
+      compiled_project: compiledOutputs,
+      message: `Kuro has successfully broken down the project, executed ${compiledOutputs.length} parallel ASPs on the edge, and compiled their deliverables.`
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
