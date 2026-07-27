@@ -1,27 +1,37 @@
-# Kuro Handoff Documentation
+# Kuro Agent - Hackathon Handoff Document
 
-Welcome to the Kuro project. This document serves to context-switch new agents into the current state of the codebase.
+This document summarizes the current state of the Kuro Agent project, the unresolved Vercel issue, and the exact next steps needed to complete the OKX AI Hackathon submission.
 
-## 1. Project Overview
-Kuro is a decentralized Meta-Agent built for the OKX AI ecosystem. It acts as both an **Autonomous Arbitrator** (evaluating whether ASP payloads fulfill task requirements) and a **Meta-Contractor** (breaking down massive projects into delegateable sub-tasks).
+## 1. Project Status
 
-## 2. Architecture & Tech Stack
-- **Frontend**: Vite + React + TypeScript + Vanilla CSS. The landing page is completely built and styled with a sleek, minimalist, dark-mode "Kimi-inspired" aesthetic. It includes a live terminal typewriter animation.
-- **Backend API**: Vercel Serverless Functions (`/api/judge.ts` and `/api/delegate.ts`).
-- **Inference Layer**: Groq SDK (`llama-3.1-8b-instant`).
-- **Payments**: Both API endpoints are wrapped in a custom `x402.ts` middleware that forces clients to pay 0.01 USDT to the Kumo Agentic Wallet via the x402 Payment Protocol before inference runs.
+- **Agent APIs**: The core inference endpoints (`/api/judge` and `/api/delegate`) are implemented and configured to use Groq.
+- **x402 Payment Middleware**: Implemented in `api/lib/x402.ts` to enforce the x402 payment standard for Agent-to-Agent (A2A) interactions.
+- **Environment**: The environment variables for Groq and the OKX Agentic Wallet (API Key, Secret, Passphrase) are properly configured.
+- **Vercel Build**: The TypeScript module resolution issue (`.js` extensions missing) has been completely resolved. The project builds correctly locally and on Vercel.
 
-## 3. Current State
-- ✅ **Frontend Complete**: The landing page looks incredible and is fully responsive.
-- ✅ **Backend Deployed**: Vercel zero-config routing is fully enabled. Both the static frontend and the `/api` serverless functions deploy perfectly.
-- ✅ **x402 Fully Functional**: 
-  - `curl -X POST https://kuro-virid.vercel.app/api/judge` ➔ Returns **402 Payment Required** with the WWW-Authenticate challenge.
-  - Passing `x-402-signature` and `x-402-payment` headers successfully bypasses the paywall and triggers a 200 OK Groq response.
-- ✅ **Inference Functional**: The `llama-3.1-8b-instant` model successfully parses the prompts and returns deterministic JSON schemas.
+## 2. Unresolved Issue: Vercel `FUNCTION_INVOCATION_FAILED`
 
-## 4. Next Steps for Next Agent
-The project is currently feature-complete and ready for the OKX AI Genesis Hackathon submission! If you are picking up this project, your immediate tasks might include:
-1. Hardening the `x402.ts` middleware (currently, it blindly accepts any headers to simulate payment; in production, you would need to integrate the `OKXFacilitatorClient` to actually verify the blockchain signature).
-2. Adding more API endpoints if the user requests new Agent capabilities.
+When the Vercel API endpoints are invoked, Vercel returns a `500 FUNCTION_INVOCATION_FAILED` error.
 
-*Note: Be aware that React Strict Mode locally causes double-mounts. The terminal animation in `App.tsx` has specifically been engineered to handle unmounting gracefully.*
+**The Cause:** 
+This crash is caused by the `@okxweb3/x402-core` SDK interacting with the Vercel Serverless/Edge Node.js runtime. Vercel's serverless environment often struggles with certain native crypto dependencies, top-level await requirements, or rapid timeout thresholds during SDK initializations.
+
+**What We Tried:**
+1. We successfully bypassed the error locally by replacing the OKX SDK with a manual `ethers.js` verification of the HTTP 402 signature. This worked perfectly.
+2. However, because the hackathon requires the official OKX SDK, **we restored the `@okxweb3/x402-core` dependencies** to ensure eligibility.
+3. We wrapped the `resourceServer.initialize()` call in a `try/catch` block to prevent it from crashing the boot sequence, but you will need to test the deployed endpoint to see if Vercel handles this gracefully or if further Vercel-specific configuration (like polyfills or changing the Vercel runtime to Node.js 20+) is required.
+
+## 3. Next Steps: OKX AI Marketplace Registration
+
+We successfully passed the pre-flight checks and verified your wallet address is ready to register Kuro as an ASP (Agent Service Provider) on OKX.AI. 
+
+To complete the hackathon registration, you must finish the CLI-driven identity creation process.
+
+**Run the registration flow:**
+When you are ready to continue, start the registration process by providing the following details:
+
+1. **Name**: (e.g., "Kuro")
+2. **Description**: A short summary of what Kuro does (under 500 characters).
+3. **Avatar**: An image file (1:1 square). You can use the `kuro_hero_magnetic` image you uploaded earlier.
+
+Once you provide these, the agent will guide you through setting up Kuro's specific service details (Agent-to-Agent, API Service, pricing) and submit the final registration to the OKX Onchain OS. Good luck with the submission!
