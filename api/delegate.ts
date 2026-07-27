@@ -19,38 +19,58 @@ async function coreHandler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const prompt = `You are Kuro, a Meta-Contractor Agent on the OKX AI Marketplace.
-A User has hired you to execute a massive, complex project. Since you are a Meta-Agent, you don't do the work yourself. Instead, you break the user's project down into highly specific sub-tasks to delegate to other AI Agents (ASPs).
+    const prompt = `You are Kuro, a highly advanced OKX Onchain OS Orchestrator Agent.
+Another agent has hired you to break down a massive, complex project into a deterministic dispatch manifest.
+You must output a highly technical JSON object representing the workflow.
 
 User's Project:
 ${userPrompt}
 
 Total Budget: ${budget} USDT
 
-Break this down into 3 to 5 logical sub-tasks.
-Output your response as a JSON object containing a "subTasks" array. Each object in the array should have:
-- "title": A short title for the sub-task.
-- "requiredSpecialty": The skill required (e.g. "Smart Contract Auditor", "Frontend Dev").
-- "allocatedBudget": The amount of USDT allocated to this sub-task (ensure the total adds up to exactly ${budget}).
-- "instructions": 2-3 sentences of exact instructions to send to the sub-ASP.
-Output ONLY JSON. No markdown formatting.`;
+Output EXACTLY a JSON object with the following schema:
+{
+  "orchestration_id": "<generate a random 32-char hex string>",
+  "total_budget_settled": "${budget}",
+  "tasks": [
+    {
+      "target_asp_profile": "<e.g., okx.agent.smart-contract-auditor.v2>",
+      "escrow_allocation": "<amount in USDT>",
+      "erc8004_spec": {
+        "network": "eip155:196",
+        "entry_point": "<function or API signature>",
+        "calldata_requirements": "<strict technical description of the required payload>"
+      },
+      "execution_instructions": "<highly technical, precise instructions for the sub-agent>",
+      "verification_criteria": "<strict criteria that the Kuro Judge agent will use to verify this task>"
+    }
+  ]
+}
+
+Ensure the sum of all "escrow_allocation" exactly equals ${budget}. Break the project into 3 to 5 logical tasks.
+Output ONLY valid JSON. No markdown or explanation.`;
 
     const chatCompletion = await groq.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
+      messages: [{ role: "system", content: "You are a Web3 protocol generator. Output only raw JSON." }, { role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
       temperature: 0.1,
       response_format: { type: "json_object" },
     });
 
-    const responseText = chatCompletion.choices[0]?.message?.content || '{"subTasks": []}';
-    const result = JSON.parse(responseText);
+    const responseText = chatCompletion.choices[0]?.message?.content || '{"tasks": []}';
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      result = { error: "Failed to parse orchestrator output" };
+    }
 
     return res.status(200).json({
-      service: "delegate",
+      service: "kuro-orchestrator",
       timestamp: new Date().toISOString(),
-      orchestrationPlan: result.subTasks,
-      status: "ready-for-dispatch",
-      message: `Kuro has successfully broken down the project into ${result.subTasks.length} sub-tasks and is ready to hire sub-ASPs on the OKX registry.`
+      status: "dispatching_to_onchain_os",
+      manifest: result,
+      message: `Kuro has successfully synthesized the ERC-8004 dispatch manifest. Ready to instantiate x402 escrow contracts for sub-agents.`
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
