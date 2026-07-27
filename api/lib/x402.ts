@@ -7,17 +7,32 @@ const X402_AMOUNT = "0.1";
 const X402_TOKEN = "USDT";
 const X402_ADDRESS = "0x43da1e912bccbdb5bc7db853814d5ad310f61ad4"; // Kumo Agentic Wallet
 
-// Initialize the OKX Facilitator Client
-const facilitatorClient = new OKXFacilitatorClient({
-  apiKey: process.env.OKX_API_KEY || "",
-  secretKey: process.env.OKX_SECRET_KEY || "",
-  passphrase: process.env.OKX_PASSPHRASE || "",
-});
-
-const resourceServer = new x402ResourceServer(facilitatorClient)
-  .register("eip155:*", new ExactEvmScheme());
-
+let resourceServer: any;
 let initialized = false;
+
+async function getResourceServer() {
+  if (!resourceServer) {
+    const facilitatorClient = new OKXFacilitatorClient({
+      apiKey: process.env.OKX_API_KEY || "",
+      secretKey: process.env.OKX_SECRET_KEY || "",
+      passphrase: process.env.OKX_PASSPHRASE || "",
+    });
+
+    resourceServer = new x402ResourceServer(facilitatorClient)
+      .register("eip155:*", new ExactEvmScheme());
+  }
+
+  if (!initialized && process.env.OKX_API_KEY) {
+    try {
+      await resourceServer.initialize();
+      initialized = true;
+    } catch (err) {
+      console.error("Failed to initialize OKX Facilitator:", err);
+    }
+  }
+
+  return resourceServer;
+}
 
 /**
  * Middleware to enforce the x402 Payment Standard for A2MCP.
@@ -26,14 +41,7 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
   return async (req: VercelRequest, res: VercelResponse) => {
     if (req.method === "OPTIONS") return res.status(200).end();
 
-    if (!initialized && process.env.OKX_API_KEY) {
-      try {
-        await resourceServer.initialize();
-        initialized = true;
-      } catch (err) {
-        console.error("Failed to initialize OKX Facilitator:", err);
-      }
-    }
+    const rs = await getResourceServer();
 
     const signature = req.headers["x-402-signature"] as string;
     
