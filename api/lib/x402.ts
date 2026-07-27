@@ -27,8 +27,12 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
     if (req.method === "OPTIONS") return res.status(200).end();
 
     if (!initialized && process.env.OKX_API_KEY) {
-      await resourceServer.initialize();
-      initialized = true;
+      try {
+        await resourceServer.initialize();
+        initialized = true;
+      } catch (err) {
+        console.error("Failed to initialize OKX Facilitator:", err);
+      }
     }
 
     const signature = req.headers["x-402-signature"] as string;
