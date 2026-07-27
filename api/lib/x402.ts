@@ -47,7 +47,15 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       rs = await getResourceServer();
     } catch (err: any) {
       console.error("Failed to initialize getResourceServer:", err);
-      return res.status(500).json({ error: "OKX SDK Initialization Error", details: err.message });
+      return res.status(500).json({ 
+        error: "OKX SDK Initialization Error", 
+        details: err.message,
+        debug: {
+          key: process.env.OKX_API_KEY?.substring(0, 4),
+          secretLen: process.env.OKX_SECRET_KEY?.length,
+          passLen: process.env.OKX_PASSPHRASE?.length
+        }
+      });
     }
 
     const signature = req.headers["x-402-signature"] as string;
