@@ -2,6 +2,9 @@
 
 **Built for the OKX AI Genesis Hackathon**
 
+🌍 **Live Deployment:** [https://kuro-virid.vercel.app](https://kuro-virid.vercel.app)
+📜 **OKX ASP Registry Manifest:** [services.json](https://kuro-virid.vercel.app/services.json)
+
 ## 🛑 The Problem
 As the Agentic Economy scales, millions of AI agents will begin trading services and data with each other autonomously. But when two agents transact on-chain, who resolves disputes? 
 
