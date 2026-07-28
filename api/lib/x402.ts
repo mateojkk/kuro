@@ -64,13 +64,10 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       });
     }
 
-    const signature = req.headers["x-402-signature"] as string;
-    
-    // The dummy-signature bypass has been removed for production.
-    // All requests must now pass strict OKX X402 payment verification.
-
     // 1. Unpaid Request: Issue Official 402 Challenge
-    if (!signature) {
+    const paymentHeader = req.headers["payment-signature"] as string;
+    
+    if (!paymentHeader) {
       res.setHeader("WWW-Authenticate", `x402 amount="${X402_AMOUNT}", token="${X402_TOKEN}", network="${X402_NETWORK}", address="${X402_ADDRESS}"`);
       return res.status(402).json({
         error: "Payment Required",
@@ -78,8 +75,6 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       });
     }
 
-    // 1. Unpaid Request: Issue Official 402 Challenge
-    const paymentHeader = req.headers["payment-signature"] as string;
     let paymentPayload: any;
     if (paymentHeader) {
       try { paymentPayload = JSON.parse(Buffer.from(paymentHeader, "base64").toString("utf-8")); } catch (e) {}
