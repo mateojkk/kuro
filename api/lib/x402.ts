@@ -65,16 +65,16 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
 
     const signature = req.headers["x-402-signature"] as string;
     
-    // Fallback: If no OKX keys are set, or it's a dummy signature for testing, bypass Facilitator
-    if (!process.env.OKX_API_KEY || signature === "dummy-signature") {
-      if (!signature) {
-        res.setHeader("WWW-Authenticate", `x402 amount="${X402_AMOUNT}", token="${X402_TOKEN}", address="${X402_ADDRESS}"`);
-        return res.status(402).json({
-          error: "Payment Required",
-          challenge: { amount: X402_AMOUNT, token: X402_TOKEN, address: X402_ADDRESS }
-        });
-      }
-      return handler(req, res);
+    // The dummy-signature bypass has been removed for production.
+    // All requests must now pass strict OKX X402 payment verification.
+
+    // 1. Unpaid Request: Issue Official 402 Challenge
+    if (!signature) {
+      res.setHeader("WWW-Authenticate", `x402 amount="${X402_AMOUNT}", token="${X402_TOKEN}", network="${X402_NETWORK}", address="${X402_ADDRESS}"`);
+      return res.status(402).json({
+        error: "Payment Required",
+        challenge: { amount: X402_AMOUNT, token: X402_TOKEN, network: X402_NETWORK, address: X402_ADDRESS }
+      });
     }
 
     // 1. Unpaid Request: Issue Official 402 Challenge
