@@ -5,7 +5,8 @@ import { ExactEvmScheme } from "@okxweb3/x402-evm/exact/server";
 
 const X402_AMOUNT = "0.1";
 const X402_TOKEN = "USDT";
-const X402_ADDRESS = "0x43da1e912bccbdb5bc7db853814d5ad310f61ad4"; // Kumo Agentic Wallet
+const X402_NETWORK = "eip155:196"; // X Layer Mainnet
+const X402_ADDRESS = "0x43da1e912bccbdb5bc7db853814d5ad310f61ad4"; // Kuro Agentic Wallet
 
 let resourceServer: any;
 let initialized = false;
@@ -84,7 +85,7 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       try { paymentPayload = JSON.parse(Buffer.from(paymentHeader, "base64").toString("utf-8")); } catch (e) {}
     }
 
-    const resourceConfig: any = { scheme: 'exact', network: 'eip155:196', payTo: X402_ADDRESS, price: X402_AMOUNT, asset: X402_TOKEN };
+    const resourceConfig: any = { scheme: 'exact', network: X402_NETWORK, payTo: X402_ADDRESS, price: X402_AMOUNT, asset: X402_TOKEN };
     const resourceInfo = { url: req.url || "/", description: 'API Access', mimeType: 'application/json' };
 
     let result: any;
