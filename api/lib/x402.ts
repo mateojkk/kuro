@@ -64,16 +64,7 @@ export function withX402(handler: (req: VercelRequest, res: VercelResponse) => P
       });
     }
 
-    // 1. Unpaid Request: Issue Official 402 Challenge
     const paymentHeader = req.headers["payment-signature"] as string;
-    
-    if (!paymentHeader) {
-      res.setHeader("WWW-Authenticate", `x402 amount="${X402_AMOUNT}", token="${X402_TOKEN}", network="${X402_NETWORK}", address="${X402_ADDRESS}"`);
-      return res.status(402).json({
-        error: "Payment Required",
-        challenge: { amount: X402_AMOUNT, token: X402_TOKEN, network: X402_NETWORK, address: X402_ADDRESS }
-      });
-    }
 
     let paymentPayload: any;
     if (paymentHeader) {
